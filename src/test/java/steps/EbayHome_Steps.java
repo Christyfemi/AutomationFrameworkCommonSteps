@@ -5,19 +5,28 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import net.serenitybdd.core.annotations.findby.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.fail;
 public class EbayHome_Steps {
           WebDriver driver;
 
-      public EbayHome_Steps(Common_Steps common_steps){
-          this.driver= common_steps.getDriver();
-      }
+
 
     @Given("I am on Ebay Home page")
-    public void i_am_on_Ebay_Home_page() {
-  //       System.setProperty("webdriver.chrome.driver","webdrivers/chromedriver.exe");
-//        driver = new ChromeDriver();
-        driver.get("https://www.ebay.co.uk/");
+    public void i_am_on_Ebay_Home_page() throws InterruptedException {
+
+       System.setProperty("webdriver.chrome.driver","webdrivers/chromedriver.exe");
+       driver = new ChromeDriver();
+       driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
+       driver.get("https://www.ebay.co.uk");
+        Thread.sleep(3000);
+
+        try{
+            driver.findElement(org.openqa.selenium.By.id("gdpr-banner-accept")).click();
+        } catch(Exception e){}
     }
 
     @When("I click on Advanced Link")
@@ -45,16 +54,17 @@ public class EbayHome_Steps {
     @Then("I validate at least 1000 search present")
     public void i_validate_at_least_search_present() {
         String itemCount= driver.findElement(By.cssSelector("h1.srp-controls__count-heading>span.BOLD:first-child")).getText().trim();
-        String itemCount2 = itemCount.replace(", ", " ");
+        System.out.println("itemCount:" + itemCount);
+        //3258
+        String itemCount2 = itemCount.replace(",", "");
+        System.out.println("itemCount2:" + itemCount2);
        int itemCountInt = Integer.parseInt(itemCount2);
-       if(itemCountInt <=1000){
+       if(itemCountInt <= 1000){
            fail("Less than 1000 result shown");
        }
-//       driver.quit();
+      driver.quit();
     }
 
-    private void fail(String s) {
-    }
 
 
 }
