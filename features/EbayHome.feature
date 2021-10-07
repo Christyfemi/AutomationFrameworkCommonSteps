@@ -12,4 +12,3 @@
        When    I search for iphone 11
        Then    I validate at least 1000 search present
 
-        # Hello world
